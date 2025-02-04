@@ -1,0 +1,27 @@
+Name: No Error Message on Empty Cart during Checkout
+
+Problem Description:
+When clicking the "Checkout" button on an empty cart, the expected error message "Your cart is empty" is not displayed.
+
+Steps to reproduce:
+
+Log in with valid credentials.
+Go to the inventory page and do not add any items to the cart.
+Click the "Cart" button in the upper right corner.
+Go to the cart page.
+Click the "Checkout" button.
+Expected Result:
+The "Your cart is empty" error message should appear on the empty cart page.
+
+Actual Result:
+No error message is displayed. The user is taken to another page without the message.
+
+System:
+
+Operating System: Windows 10
+Browser: Microsoft Edge (version 132.0.2957.140)
+Website: https://www.saucedemo.com/
+
+Reasons and Recommendations:
+If the message should be there, but it is not, it may be due to a problem on the server side or a lack of empty trash handling on the client side.
+It is important to note that the appropriate check was made and the message did not appear.
