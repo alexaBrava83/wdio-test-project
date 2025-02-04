@@ -19,8 +19,8 @@ class InventoryPage {
         return $('#shopping_cart_container'); 
     }
 
-       // Селектори кнопок соцмереж у футері
-       get twitterLink() {
+    // Селектори кнопок соцмереж у футері
+    get twitterLink() {
         return $('[data-test="social-twitter"]');
     }
 
@@ -32,69 +32,25 @@ class InventoryPage {
         return $('[data-test="social-linkedin"]');
     }
 
-    get productNames() { 
-        return $$('[data-test="inventory-item-name"]'); 
-    }   
-    get productPrices() { 
-        return $$('[data-test="inventory-item-price"]'); 
-    } 
-    
     get sortDropdown() { 
         return $('[data-test="product-sort-container"]'); 
     } 
 
-    get optionAZ() {
-        return $('option[value="az"]');  
+    async selectSortingByText(text) {
+        await this.sortDropdown.waitForDisplayed();
+        await this.sortDropdown.click();
+        const option = await $(`option*=${text}`);
+        await option.click();
     }
 
-    get optionZA() {
-        return $('option[value="za"]'); 
-    }
-
-    get optionLowToHigh() {
-        return $('option[value="lohi"]');  
-    }
-
-    get optionHighToLow() {
-        return $('option[value="hilo"]');  
-    }
-
-    async selectSorting(option) {
-        await this.sortDropdown.selectByAttribute('value', option);
-
-        if (option === 'az') {
-            await this.optionAZ.click();  
-        } else if (option === 'za') {
-            await this.optionZA.click();  
-        } else if (option === 'lohi') {
-            await this.optionLowToHigh.click();  
-        } else if (option === 'hilo') {
-            await this.optionHighToLow.click();  
-        } else {
-            throw new Error('Unknown sorting option: ' + option);
-        }
-    }
-    
-    async getProductNames() {
-        await this.productNames[0].waitForDisplayed();
-        return await Promise.all(this.productNames.map(async item => await item.getText()));
-    }
-
-    async getProductPrices() {
-        return await Promise.all(this.productPrices.map(async item => {
-            let priceText = await item.getText();
-            return parseFloat(priceText.replace('$', ''));
-        }));
-    }
-    
-    async getFirstProductName() {
-        const names = await this.getProductNames();
-        return names[0];  // Отримуємо перший елемент списку
-    }
-    
-    async getLastProductName() {
-        const names = await this.getProductNames();
-        return names[names.length - 1];  // Отримуємо останній елемент списку
+    async waitForSortingToApply(expectedFirstItem = null) {
+        await browser.waitUntil(async () => {
+            const firstProduct = await this.getFirstProductName();
+            if (expectedFirstItem) {
+                return firstProduct === expectedFirstItem;
+            }
+            return true; // Якщо не передано конкретний товар, просто чекаємо зміни
+        }, { timeout: 5000, timeoutMsg: 'Sorting did not apply in time' });
     }
     
     async clickTwitter() {
@@ -118,9 +74,12 @@ class InventoryPage {
     }
 
     async isLoaded() {
-        await this.pageTitle;
+        try {
+            return await this.pageTitle.waitForDisplayed({ timeout: 2000 });
+        } catch (error) {
+            return false;
+        }
     }
-    
 
     async clickLogout() {
         await this.logoutButton.click();

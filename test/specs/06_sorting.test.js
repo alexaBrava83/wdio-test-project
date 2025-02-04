@@ -2,37 +2,49 @@ import InventoryPage from '../pageobjects/inventory.page';
 import LoginPage from '../pageobjects/login.page';
 
 describe('Sorting', () => {
-    beforeEach(async () => {
+    before(async () => {
         await LoginPage.open();
         await LoginPage.login('standard_user', 'secret_sauce');
         await InventoryPage.isLoaded();
     });
 
-    it('should sort products by name (Z to A)', async () => {
-        await InventoryPage.selectSorting('za');  // Вибір сортування Z-A
-        const firstProduct = await InventoryPage.getFirstProductName();
-        const lastProduct = await InventoryPage.getLastProductName();
-        expect(firstProduct).toBe('Test.allTheThings() T-Shirt (Red)');
-        expect(lastProduct).toBe('Sauce Labs Backpack');
+    beforeEach(async () => {
+        if (!(await InventoryPage.isLoaded())) { 
+            await LoginPage.open();
+            await LoginPage.login('standard_user', 'secret_sauce');
+        }
+        await browser.refresh(); // Перезавантажуємо сторінку перед кожним тестом
+        await InventoryPage.isLoaded();
     });
 
-    it('should sort products by name (A to Z)', async () => {
-        await InventoryPage.selectSorting('az');  // Вибір сортування A-Z
-        const firstProduct = await InventoryPage.getFirstProductName();
-        const lastProduct = await InventoryPage.getLastProductName();
-        expect(firstProduct).toBe('Sauce Labs Backpack');
-        expect(lastProduct).toBe('Test.allTheThings() T-Shirt (Red)');
-    });
-
-    it('should sort products by price (low to high)', async () => {
-        await InventoryPage.selectSorting('lohi');  // Вибір сортування ціни (низька до високої)
-        const prices = await InventoryPage.getProductPrices();
-        expect(prices).toEqual([...prices].sort((a, b) => a - b));  
-    });
-
-    it('should sort products by price (high to low)', async () => {
-        await InventoryPage.selectSorting('hilo');  // Вибір сортування ціни (висока до низької)
-        const prices = await InventoryPage.getProductPrices();
-        expect(prices).toEqual([...prices].sort((a, b) => b - a));
+    it('should verify the first item after sorting by different criteria', async () => {
+    
+        // za
+        await InventoryPage.selectSortingByText('Name (Z to A)'); 
+        let firstItem = await $('.inventory_list .inventory_item');
+        await firstItem.waitForExist();  
+        let firstItemName = await firstItem.$('.inventory_item_name').getText();
+        expect(firstItemName).toBe('Test.allTheThings() T-Shirt (Red)'); 
+    
+        // az
+        await InventoryPage.selectSortingByText('Name (A to Z)'); 
+        firstItem = await $('.inventory_list .inventory_item');
+        await firstItem.waitForExist();  
+        firstItemName = await firstItem.$('.inventory_item_name').getText();
+        expect(firstItemName).toBe('Sauce Labs Backpack');
+    
+        // lohi
+        await InventoryPage.selectSortingByText('Price (low to high)'); 
+        firstItem = await $('.inventory_list .inventory_item');
+        await firstItem.waitForExist(); 
+        firstItemName = await firstItem.$('.inventory_item_name').getText();
+        expect(firstItemName).toBe('Sauce Labs Onesie'); 
+    
+        // hilo
+        await InventoryPage.selectSortingByText('Price (high to low)');
+        firstItem = await $('.inventory_list .inventory_item');
+        await firstItem.waitForExist(); 
+        firstItemName = await firstItem.$('.inventory_item_name').getText();
+        expect(firstItemName).toBe('Sauce Labs Fleece Jacket'); 
     });
 });

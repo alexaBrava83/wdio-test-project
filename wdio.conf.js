@@ -27,7 +27,7 @@ exports.config = {
     waitforTimeout: 10000,
 
     // Тайм-аут для сесії браузера
-    connectionRetryTimeout: 90000,
+    connectionRetryTimeout: 30000,
 
     // Кількість спроб підключення при помилці
     connectionRetryCount: 3,
