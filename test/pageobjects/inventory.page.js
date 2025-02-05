@@ -1,4 +1,5 @@
-class InventoryPage {
+import Page from './page'
+class InventoryPage extends Page {
     get pageTitle() {
         return $('#header_container .title');
     }
@@ -19,7 +20,6 @@ class InventoryPage {
         return $('#shopping_cart_container'); 
     }
 
-    // Селектори кнопок соцмереж у футері
     get twitterLink() {
         return $('[data-test="social-twitter"]');
     }
@@ -49,7 +49,7 @@ class InventoryPage {
             if (expectedFirstItem) {
                 return firstProduct === expectedFirstItem;
             }
-            return true; // Якщо не передано конкретний товар, просто чекаємо зміни
+            return true; 
         }, { timeout: 5000, timeoutMsg: 'Sorting did not apply in time' });
     }
     
@@ -83,6 +83,10 @@ class InventoryPage {
 
     async clickLogout() {
         await this.logoutButton.click();
+    }
+
+    async open() {
+        return super.open('');
     }
 }
 
