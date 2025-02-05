@@ -67,7 +67,7 @@ class CartPage extends Page {
     }
 
     async open() {
-        return super.open('');
+        return super.open('/cart.html');
     }
 }
 

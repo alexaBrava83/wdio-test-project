@@ -20,7 +20,7 @@ class LoginPage extends Page {
     } 
 
    async open() {
-        return super.open('');
+        return super.open('/');
     }
 
     async login(username, password) {
