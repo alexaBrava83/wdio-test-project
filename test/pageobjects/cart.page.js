@@ -7,7 +7,7 @@ class CartPage extends Page {
         return $$('.cart_item'); 
     }
     get cartBadge() { 
-        return $('.shopping_cart_badge'); 
+        return $('[data-test="shopping-cart-badge"]'); 
     } 
         
     get continueShoppingButton() { 
@@ -41,6 +41,28 @@ class CartPage extends Page {
     get continueButton() {
         return $('[data-test="continue"]')
     };
+    get completeMessage() {
+        return $('h2');
+    }
+    get errorMessage() {
+        return $('#checkout_info_container .error-message-container');
+    }
+
+    async getBadge() {
+        return await this.cartBadge.getText();
+    }
+
+    async getCartItem() {
+        return await this.cartItemName.getText();
+    }
+
+    async getCompleteMessage() {
+        return await this.completeMessage.getText();
+    }
+
+    async getErrorMessage() {
+        return await this.errorMessage.getText();
+    }
 
     async fillForm(firstName, lastName, postalCode) {
         await this.firstNameInput.setValue(firstName);

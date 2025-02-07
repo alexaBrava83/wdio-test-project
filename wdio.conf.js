@@ -1,4 +1,4 @@
-exports.config = {
+export const config = {
 
     runner: 'local',
     maxInstances: 1,

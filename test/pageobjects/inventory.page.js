@@ -20,16 +20,12 @@ class InventoryPage extends Page {
         return $('#shopping_cart_container'); 
     }
 
-    get twitterLink() {
-        return $('[data-test="social-twitter"]');
-    }
-
-    get facebookLink() {
-        return $('[data-test="social-facebook"]');
-    }
-
-    get linkedinLink() {
-        return $('[data-test="social-linkedin"]');
+    get socialLinks() {
+        return {
+            twitter: $('[data-test="social-twitter"]'),
+            facebook: $('[data-test="social-facebook"]'),
+            linkedin: $('[data-test="social-linkedin"]')
+        };
     }
 
     get sortDropdown() { 
@@ -37,32 +33,17 @@ class InventoryPage extends Page {
     } 
 
     async selectSortingByText(text) {
-        await this.sortDropdown.waitForDisplayed();
         await this.sortDropdown.click();
-        const option = await $(`option*=${text}`);
-        await option.click();
+        await this.sortDropdown.selectByVisibleText(text);
     }
-
-    async waitForSortingToApply(expectedFirstItem = null) {
-        await browser.waitUntil(async () => {
-            const firstProduct = await this.getFirstProductName();
-            if (expectedFirstItem) {
-                return firstProduct === expectedFirstItem;
-            }
-            return true; 
-        }, { timeout: 5000, timeoutMsg: 'Sorting did not apply in time' });
+       
+    async getFirstItemName() {
+        const firstItem = await $('.inventory_list .inventory_item');
+        return await firstItem.$('.inventory_item_name').getText();
     }
     
-    async clickTwitter() {
-        await this.twitterLink.click();
-    }
-
-    async clickFacebook() {
-        await this.facebookLink.click();
-    }
-
-    async clickLinkedIn() {
-        await this.linkedinLink.click();
+    async openSocialLink(platform) {
+        await this.socialLinks[platform].click();
     }
 
     async addToCart() {
@@ -79,6 +60,10 @@ class InventoryPage extends Page {
         } catch (error) {
             return false;
         }
+    }
+
+    async clickCartButton() {
+        await this.cartButton.click();
     }
 
     async clickLogout() {
